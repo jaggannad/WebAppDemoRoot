@@ -10,6 +10,10 @@ app.secret_key = "FlaskDemo"
 
 @app.route('/')
 def index():
+    '''
+    index page
+    :return:
+    '''
     return redirect('/about')
 
 

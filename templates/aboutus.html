@@ -1,0 +1,42 @@
+{% extends 'defaultlayout.html' %}
+
+    {% block body %}
+        <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css')}}"-->
+        <style>
+            body{
+                background-image:url('http://www.storylinemissions.org/wp-content/uploads/2014/03/slide01.jpg');
+            }
+            #aboutusdiv{
+                padding: 40px;
+                background: black;
+                opacity: 0.8;
+                color: white;
+                border-radius: 10px;
+            }
+            #aboutusbody{
+                padding: 20px;
+            }
+        </style>
+        <div id = 'aboutusdiv' class= 'container' style="position:relative; top:250px; left:auto;">
+            <div id = 'aboutustitle' style="position:relative; top:0px; left:200px;">
+                <h2>This is the FULL Intern Program<small>-Learn & grow with us</small></h2>
+            </div>
+            <div id = 'aboutusbody' class='container' style="text-align: justify;">
+                <p>
+                    FULL Creative mission is to change how the world works. Ideas are not bound by place or time,
+                    and their implementation shouldn't be either. We are building toward a future when people can contribute
+                    free from limitations.Full creative offers a three month internship program for aspiring software developers.
+                    <code>Enroll yourself now <a href="/login">here</a> with us.</code> This is an ideal oppurtunity for learning and
+                    kickstarting your career. For more details about us go to <a href = "https://full.io/">http:/www.full.io</a>
+                    We see the potential for a more inclusive, more competitive model where outputs trump inputs.
+                    We believe people should be able to work and learn together whether they're across the table or across the world
+                    from each other. In an office tower conference room, on a commuter train, or in a sidewalk cafe, we empower people
+                    to communicate, collaborate, and produce. We don't just want to change the world, we want to improve it through
+                    solutions that scale, empower and disrupt our expectations.<br><br>
+
+                    To know more about the various internship programs that we offer <a href = "https://full.io/jobs/in">click here</a>.
+                </p>
+            </div>
+        </div>
+
+    {% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'defaultlayout.html' %}
+
+    {% block body %}
+        <style>
+            body{
+                background-image:url('https://i.pinimg.com/originals/20/65/87/2065873bafb80117506d5bef7483cad7.jpg');
+            }
+            .form-signin{
+                padding: 20px;
+                background: white;
+                opacity: .8;
+            }
+        </style>
+        {% include '/_loginform.html' %}
+        <p>{{error}}</p>
+    {% endblock %}

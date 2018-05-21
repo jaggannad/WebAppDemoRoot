@@ -1,7 +1,7 @@
 {% extends 'defaultlayout.html' %}
 
     {% block body %}
-
+        <title>{{username}}'s Profile page</title>
         {% if 'user' in session %}
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css')}}">
         {% include '/_navbar.html' %}

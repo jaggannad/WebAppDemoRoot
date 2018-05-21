@@ -12,8 +12,5 @@ handlers:
 - url: /login\.html
   script: FlaskDemo.app
 
--url: /profile\.html
-  script: FlaskDemo.app
-
 - url: /.*
   script: FlaskDemo.app

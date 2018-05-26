@@ -1,0 +1,25 @@
+.content {
+  margin: 0;
+  overflow: hidden;
+  height:100%;
+}
+.welcome{
+    padding: 20px;
+}
+.col-md-2{
+    padding: 20px;
+    overflow: hidden;
+    height: 100%;
+}
+div.col-md-8{
+    background: black;
+    opacity: .9;
+    color: white;
+    position: absolute;
+    top: 45px;
+    left: 17%;
+    overflow-y: scroll;
+    height: 100%;
+    border-style: solid;
+    border-width: 0px 1px 0px 1px;
+}

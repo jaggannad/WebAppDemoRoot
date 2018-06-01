@@ -1,25 +1,93 @@
+
+hr{
+    background-color: white;
+}
+
 .content {
   margin: 0;
   overflow: hidden;
   height:100%;
 }
+
+.profilepic{
+    padding: 20px;
+}
+
 .welcome{
     padding: 20px;
 }
-.col-md-2{
-    padding: 20px;
-    overflow: hidden;
-    height: 100%;
-}
-div.col-md-8{
+
+
+div.leftcol {
     background: black;
     opacity: .9;
     color: white;
     position: absolute;
     top: 45px;
-    left: 17%;
+    left: 0px;
+    overflow: scroll;
+    height: 100%;
+    width:100%;
+}
+
+div.middlecolumn {
+    background: black;
+    opacity: .9;
+    color: white;
+    padding: 20px;
+    position: absolute;
+    top: 45px;
+    left: 16.666%;
     overflow-y: scroll;
     height: 100%;
     border-style: solid;
-    border-width: 0px 1px 0px 1px;
+    border-width: 0px 0px 0px 0px;
+}
+
+div.rightcol {
+    background: black;
+    opacity: .9;
+    color: white;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    overflow-y: scroll;
+    height: 100%;
+    width:100%
+}
+
+#map{
+    background:white;
+    width:180px;
+    height:170px
+}
+
+.viewpostdiv{
+    width: 100%;
+    padding: 20px;
+    margin:auto;
+    border-radius: 10px;
+}
+
+.viewpostdetails{
+    height: 40px;
+    background: #F7F9F9;
+    color: black;
+    padding: 5px 20px;
+}
+
+.viewpostcontents{
+    height: 175px;
+    width: 100%;
+    background: #D0D3D4;
+    color: black;
+    padding: 20px;
+    overflow: scroll;
+}
+
+
+.postactions{
+    height: 40px;
+    background: #F7F9F9;
+    padding: 5px 20px;
 }

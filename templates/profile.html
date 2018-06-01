@@ -3,18 +3,146 @@
     {% block body %}
         <title>{{username}}'s Profile page</title>
         {% if 'user' in session %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css')}}">
-        {% include '/_navbar.html' %}
-        <style>
-            .welcome{
-                margin: 20px;
-            }
-        </style>
-        <div class="welcome container-fluid">
-            <h2>Welcome {{username}}!</h2><hr>
-            <img src="{{ url_for('static', filename = 'images/fullcreative.jpg')}}">
-        </div>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'Stylesheets/style.css')}}?v=5.79">
+        {% include '/_navbar.html' %}<br><br>
+        <div class="content">
+            <div class="row">
 
+                <!-- This is the left most column-->
+                <div class="col-md-2 leftcol">
+                    <div id="leftsidecontents">
+                        <div class="profilepic">
+                            <strong>Profile Pic</strong>
+                            <img src="/static/images/{{session['user'].get('profilepic')}}" height="130" width="170">
+                        </div><hr>
+                        <div class="LocalInfo">
+                            <h4>Location Info</h4>
+                            <h6>You are here @ {{weatherinfo.place}}</h6>
+                            <div id="startLat">Latitude: {{weatherinfo.latitude}} Degrees</div>
+                            <div id="startLon">Longitude: {{weatherinfo.longitude}} Degrees</div><br>
+                            <div id="map"></div>
+                        </div><hr>
+                        <div class="ClimateInfo">
+                            <h4>Climate</h4>
+                            <div id="description">Description: {{weatherinfo.description}}</div>
+                            <div id="tempmin">Min temperature: {{weatherinfo.tempmin}}˚C</div>
+                            <div id="tempmax">Max temperature: {{weatherinfo.tempmax}}˚C</div>
+                        </div><hr>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                            <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                    </div>
+                </div>
+                <!--Left column end's here!-->
+
+
+                <!-- This is the middle column-->
+                <div class="col-md-7 middlecolumn">
+
+                    <div class="welcome container">
+                        <h2>Welcome {{username}}!</h2><hr>
+                    </div>
+
+                    <!--This is the post form template-->
+                    {% include '/_post.html' %}<br><br>
+
+
+                    <!--Recent Posts appear here!-->
+                    <h4>Recent Posts will appear here!</h4><hr>
+                    <div class="recentposts" id="recentposts">
+                        {% for posts in recent_posts: %}
+                            {% set postid =  posts.key.urlsafe() %}
+                            <div class="viewpostdiv" id="{{postid}}">
+                                <div id="{{postid}}viewpostdetails" class="viewpostdetails">Posted by: {{posts.name}} On: {{posts.timestamp}}</div>
+                                <textarea id="{{postid}}viewpostcontents" class="viewpostcontents" name = "viewpostcontents"
+                                          value="{{request.form.viewpostcontents}}" disabled='disabled'>{{posts.post}}
+                                </textarea>
+                                <div id="{{postid}}postactions" class="postactions">
+
+                                    <!--form  class="form-like inline" method="post" action={{url_for('like', key=posts.key.urlsafe())}} -->
+                                        <button type="button submit" class="btn btn-link" id="{{postid}}likepost" class="likepost"
+                                                onclick="like('{{url_for('like', key=posts.key.urlsafe())}}', '{{postid}}likenumber')" style="float:left;">
+                                            <div id="{{postid}}likenumber" style="float:left;">{{posts.likes}}  Like(s)&nbsp;</div><i class="fas fa-thumbs-up"></i>
+                                        </button>
+
+                                    {% if username == posts.name %}
+
+                                        <button type="button" id = "{{postid}}updatenewpost" class="btn btn-link deletepost"
+                                                onclick="update('{{postid}}viewpostcontents', '{{url_for('update', key=posts.key.urlsafe())}}',
+                                                '{{postid}}updatenewpost', '{{postid}}updatepost')"
+                                                style="float:left; display: none;">
+                                            <i class="fa fa-share" aria-hidden="true"></i> Post
+                                        </button>
+
+                                        <button type="button" class="btn btn-link inline updatepost" id="{{postid}}updatepost"
+                                                onclick="updateview('{{postid}}viewpostcontents', '{{postid}}updatepost', '{{postid}}updatenewpost')" style="float:left;">
+                                            <i class="fas fa-pencil-alt"></i> update
+                                        </button>
+
+
+                                        <button type="button submit" class="btn btn-link" id="{{postid}}deletepost" class="deletepost"
+                                                onclick="deletepost('{{url_for('delete', key=posts.key.urlsafe())}}', '{{postid}}')" style="float:right;">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+
+
+                                    {% endif %}
+
+                                </div><br><hr>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!--Recent Posts end here!-->
+
+                    <div id = "Open-notify-api" style="padding: 30px;">
+                        <img src="{{ url_for('static', filename = 'images/fullcreative.jpg')}}" style="margin:auto"><br><br>
+
+                        <h4>This stats is obtained from the ISS!</h4>
+                        <p>The International Space Station will pass through lat: {{issinfo.get('iss_position').get('latitude')}},
+                            lon: {{issinfo.get('iss_position').get('longitude')}}</p>
+
+                        <!--Scroll Test!!-->
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                        <p>Just trying to make it scroll!!!Just trying to make it scroll!!!Just trying to make it scroll!!!</p>
+                    </div>
+                </div>
+                <!--Middle column end's here!-->
+
+                <!-- This is the right most column-->
+                <div class="col-md-3 rightcol">
+                    <div id="rightsidecontents" style="padding: 20px; background:white; color: black;">
+                        <div>
+                            <h5 style="font-family: 'Jua', sans-serif; color:red; font-size: 1.3em">Acquaint Yourself</h5><hr>
+                            <p>Flick through these topics, these topics are handpicked to help you to get through the internship program. All the best!</p>
+                            {% include '/_acordian.html' %}
+                            <br>
+                            <p><strong>Note:</strong> There are many topics which you might find important and is not added in this section,
+                                please feel free to suggest them to us by sending the link in the form below. Our team will view the links suggested
+                                by you and will add them if we feel it is appropriate.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!--Right column end's here!-->
+
+
+            </div>
+        </div>
         {% else %}
         <style>
             body{
@@ -33,14 +161,5 @@
             </div>
         {% endif %}
 
-    <script>
-        function switchoff(){
-            window.alert("Are you sure you want to log out?");
-            document.location.reload();
-            {{ session.pop('user', None) }}
-
-
-        }
-    </script>
-
+        {% include '/_script.html' %}
     {% endblock %}

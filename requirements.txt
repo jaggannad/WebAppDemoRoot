@@ -1,1 +1,6 @@
 flask
+webapp2
+jsonify
+json_encoder
+requests
+ndb

@@ -1,0 +1,87 @@
+<script type="text/javascript">
+    var Latitude;
+    var Longitude;
+    var map, infoWindow;
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 6
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            document.getElementById('startLat').innerHtml = position.coords.latitude;
+            document.getElementById('startLon').innerHtml = position.coords.longitude;
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+                          'Error: The Geolocation service failed.' :
+                          'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+    }
+
+    function switchoff(){
+        var choice = window.confirm("Are you sure you want to log out?");
+         if(choice ==  true)
+            window.location.replace("{{ url_for('logout', username=username) }}");
+    }
+
+    function updateview(postid, updatebtn, newpost){
+        document.getElementById(postid).disabled = false;
+        document.getElementById(postid).style.backgroundColor = "red";
+        document.getElementById(updatebtn).style.display = 'none';
+        document.getElementById(newpost).style.display = 'block';
+
+    }
+
+    function newpost(postid, url){
+        post = document.getElementById(postid).value;
+        $.post(url,{
+                javascript_data: post
+        });
+        document.getElementById(postid).value = "";
+        window.location.reload();
+    }
+
+    function deletepost(url, postid){
+        $.post(url);
+        document.getElementById(postid).style.display = 'none';
+        }
+
+    function like(url, like){
+        $.post(url);
+        document.getElementById(like).innerHTML = parseInt(document.getElementById(like).innerHTML)+1 + " Like(s)&nbsp;";
+    }
+    function update(postid, url, postbtn, updatebtn){
+        var post = document.getElementById(postid).value;
+        $.post(url,{
+            javascript_data: post
+        });
+        document.getElementById(postid).disabled = true;
+        document.getElementById(postid).style.backgroundColor = "white";
+        document.getElementById(postbtn).style.display = 'none';
+        document.getElementById(updatebtn).style.display = 'block';
+    }
+</script>
+<!--script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script-->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgGa1OXYnh9fMz6PW_CWLKWqLZQ0FhJvo&callback=initMap"
+type="text/javascript"></script>

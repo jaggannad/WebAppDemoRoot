@@ -1,16 +1,12 @@
-runtime: inspired-arena-203606
+runtime: python27
 api_version: 1
 threadsafe: true
 
+libraries:
+- name: ssl
+  version: latest
+
+
 handlers:
-- url: /
-  script: FlaskDemo.app
-
-- url: /aboutus\.html
-  script: FlaskDemo.app
-
-- url: /login\.html
-  script: FlaskDemo.app
-
 - url: /.*
   script: FlaskDemo.app

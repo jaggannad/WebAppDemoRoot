@@ -25,7 +25,7 @@
                   <div class="dropdown">
                     <button type = "button" class="dropbtn btn my-2 my-sm-0">Settings <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-content">
-                      <a href="settings.html">Account</a>
+                      <a href="{{url_for('accountsettings', username=username)}}">Account</a>
                       <button button type="button" class="btn btn-link" onclick="switchoff()">Log out</button>
                     </div>
                   </div>

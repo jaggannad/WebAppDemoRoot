@@ -6,6 +6,7 @@ class UserInfo(localPackages.ndb.Model):
     email = localPackages.ndb.StringProperty(required=True)
     password = localPackages.ndb.StringProperty(required=True)
     profilepic = localPackages.ndb.StringProperty(required=True)
+    isOnline = localPackages.ndb.BooleanProperty(required=True)
 
 
 class Post(localPackages.ndb.Model):
@@ -28,3 +29,7 @@ class weather:
     tempmin     = weatherinfo.get('main').get('temp_min') - 273.15
     tempmax     = weatherinfo.get('main').get('temp_max') - 273.15
     place       = weatherinfo.get('name')
+
+
+class Globals:
+    newpostkey = 0

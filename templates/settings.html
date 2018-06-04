@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'defaultlayout.html' %}
 
-</body>
-</html>
+{% block body %}
+{% include '/_navbar.html' %}<br><br>
+<div class="row">
+    <div class="col-md-3 border border-primary rounded container" style="margin: 50px;">
+        <div id="account" class="account-tab" style="padding: 30px;">
+            <h4>Your Account</h4>
+            <form>
+
+                <label for="name1">Real Name:</label>
+                <input id="name1" type="text" name="name" value="Lucas Banks" />
+
+                <label for="profilename1">Display Name:</label>
+                <input id="profilename1" type="text" name="display-name" value="l_banks" />
+
+                <label for="email1">Email Address:</label>
+                <input id="email1" type="email" name="email" value="l_banks@stack.net" />
+
+            </form>
+        </div>
+    </div>
+    <div class="col-md-7 border border-primary rounded container" style="margin: 50px;">
+        <div id="account-profile" class="account-tab" style="padding: 30px;">
+            <h4>Your Account</h4>
+            <form>
+                <label for="name">Real Name:</label>
+                    <input id="name" type="text" name="name" value="{{userinfo.username}}" /><br>
+                <label for="profilename">Display Name:</label>
+                    <input id="profilename" type="text" name="display-name" value="{{userinfo.username}}" /><br>
+                <label for="email">Email Address:</label>
+                    <input id="email" type="email" name="email" value="{{userinfo.email}}" /><br>
+                <label for="location">Location:</label>
+                    <input id="location" type="text" name="location" value="Melbourne" /><br>
+                <label for="website">Website:</label>
+                    <input id="website" type="text" name="website" value="http://mrare.co" /><br>
+                <label>Bio:</label>
+                    <textarea rows="4" name="bio"></textarea>
+                <div class="input-checkbox input-checkbox-switch">
+                    <label for="publicprofile"></label>
+                    <input id="publicprofile" type="checkbox" name="publicprofile" /><br>
+                </div>
+                    <span>Allow my profile to be viewable by guests</span>
+                    <button type="submit" class="btn btn-primary type-uppercase">Save Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

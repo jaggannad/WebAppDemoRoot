@@ -54,12 +54,24 @@
     }
 
     function newpost(postid, url){
-        post = document.getElementById(postid).value;
+        document.getElementById('postloader').style.display =  'block';
+
+        var post = document.getElementById(postid).value;
+        var responsepostid;
         $.post(url,{
                 javascript_data: post
+        }, function(jsonresult){
+            responsepostid = jsonresult.postid;
+            $("#recentposts").load(location.href + " #recentposts");
+            <!--window.alert(responsepostid);-->
+            setTimeout(function(){
+                $("#recentposts").load(location.href + " #recentposts");
+                }, 1000);
+                document.getElementById(postid).value = "";
+                document.getElementById('postloader').style.display =  'none';
         });
-        document.getElementById(postid).value = "";
-        window.location.reload();
+        console.log('test');
+        <!--setTimeout(window.location.reload(), 5000);-->
     }
 
     function deletepost(url, postid){
@@ -81,6 +93,15 @@
         document.getElementById(postbtn).style.display = 'none';
         document.getElementById(updatebtn).style.display = 'block';
     }
+
+    function showchat(name){
+        chat_close_div = document.getElementById('chatbox');
+        chat_close_div.style.display =  'block';
+    }
+
+    setInterval(function(){
+        $('#rightmostsidecontents').load(location.href + " #rightmostsidecontents");
+    }, 5000);
 </script>
 <!--script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script-->
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgGa1OXYnh9fMz6PW_CWLKWqLZQ0FhJvo&callback=initMap"

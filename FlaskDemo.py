@@ -3,6 +3,12 @@ from class_files import modal
 app = modal.localPackages.Flask(__name__)
 app.secret_key = "FlaskDemo"
 
+# modal.UserInfo(username="Jagan", email="j@g.com", password="pass", profilepic="puppy.jpg", isOnline=False).put()
+# modal.UserInfo(username="Parthi", email="p@g.com", password="pass", profilepic="mentor.png", isOnline=False).put()
+# modal.UserInfo(username="Vasanth", email="v@g.com", password="pass", profilepic="hisenberg.jpg", isOnline=False).put()
+# modal.UserInfo(username="Lokesh", email="l@g.com", password="pass", profilepic="default.jpg", isOnline=False).put()
+
+
 
 @app.route('/')
 def index():
@@ -19,7 +25,7 @@ def register():
             if modal.UserInfo.query().filter(modal.UserInfo.email == email).get():
                 modal.localPackages.flash("Email already exists, Try a different Email")
             else:
-                user_key = modal.UserInfo(username=name, email=email, password=password, profilepic="default.jpg").put()
+                user_key = modal.UserInfo(username=name, email=email, password=password, profilepic="default.jpg", isOnline=False).put()
                 if user_key:
                     return modal.localPackages.redirect(modal.localPackages.url_for('login', message="registrationSuccessful"))
                 else:
@@ -42,6 +48,8 @@ def login(message):
             if get_user_info and get_user_info.password == req_password:
                 user_info = {'name': get_user_info.username, 'password': get_user_info.password, 'profilepic': get_user_info.profilepic}
                 modal.localPackages.session['user'] = user_info
+                get_user_info.isOnline = True
+                get_user_info.put()
                 return modal.localPackages.redirect(modal.localPackages.url_for('profile', username=user_info.get('name')))
             else:
                 error = "Invalid Credentials! Pls try again."
@@ -56,6 +64,9 @@ def login(message):
 
 @app.route('/logout/<username>')
 def logout(username):
+    userinfo = modal.UserInfo.query().filter(modal.UserInfo.username == username).get()
+    userinfo.isOnline = False
+    userinfo.put()
     modal.localPackages.session.pop('user', None)
     return modal.localPackages.redirect(modal.localPackages.url_for('login', message=username+"Loggedout"))
 
@@ -68,9 +79,8 @@ def about():
 
 @app.route('/profile/v1.1/userprofile/<username>/LoggedIn', methods=['GET', 'POST'])
 def profile(username):
-    recent_posts = modal.Post.query().order(-modal.Post.timestamp)
     return modal.localPackages.render_template("profile.html", username=username, issinfo=modal.issinfo,
-                                               weatherinfo=modal.weather, recent_posts=recent_posts)
+                                               weatherinfo=modal.weather, modal=modal)
 
 
 @app.route('/post/<username>', methods=['GET', 'POST'])
@@ -78,7 +88,7 @@ def post(username):
     response = {'success': True, 'desc': 'Posted Message', 'timestamp': str(modal.localPackages.datetime.datetime.now())}
     if modal.localPackages.request.method == 'POST':
         text = modal.localPackages.request.form['javascript_data']
-        modal.Post(post=text, name=username, likes=0).put()
+        modal.Globals.newpostkey = modal.Post(post=text, name=username, likes=0).put()
     else:
         response.update({'success': False, 'desc': 'Post Failed',
                          'timestamp': str(modal.localPackages.datetime.datetime.now())})
@@ -123,6 +133,12 @@ def delete(key):
             response.update({'success': False, 'desc': 'Post Delete Failed',
                              'timestamp': str(modal.localPackages.datetime.datetime.now())})
     return modal.localPackages.jsonify(response)
+
+
+@app.route('/accountsettings/<username>', methods=['GET', 'POST'])
+def accountsettings(username):
+    userinfo = modal.UserInfo.query(modal.UserInfo.username == username).get()
+    return modal.localPackages.render_template('settings.html', username=username, userinfo=userinfo)
 
 
 if __name__ == "__main__":

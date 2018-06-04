@@ -3,7 +3,7 @@
     {% block body %}
         <title>{{username}}'s Profile page</title>
         {% if 'user' in session %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'Stylesheets/style.css')}}?v=5.79">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'Stylesheets/style.css')}}?v=5.92">
         {% include '/_navbar.html' %}<br><br>
         <div class="content">
             <div class="row">
@@ -43,7 +43,7 @@
 
 
                 <!-- This is the middle column-->
-                <div class="col-md-7 middlecolumn">
+                <div class="col-md-5 middlecolumn">
 
                     <div class="welcome container">
                         <h2>Welcome {{username}}!</h2><hr>
@@ -54,8 +54,10 @@
 
 
                     <!--Recent Posts appear here!-->
-                    <h4>Recent Posts will appear here!</h4><hr>
-                    <div class="recentposts" id="recentposts">
+                    <div id="recentpostsheading"><h4>Recent Posts will appear here!</h4><hr></div>
+                    <div id="postloader" class='postloader' style="display: none;"></div>
+                    <div id="recentposts" class="recentposts">
+                        {% set recent_posts = modal.Post.query().order(-modal.Post.timestamp) %}
                         {% for posts in recent_posts: %}
                             {% set postid =  posts.key.urlsafe() %}
                             <div class="viewpostdiv" id="{{postid}}">
@@ -122,7 +124,7 @@
                     </div>
                 </div>
                 <!--Middle column end's here!-->
-
+                {% include 'chatbox.html' %}
                 <!-- This is the right most column-->
                 <div class="col-md-3 rightcol">
                     <div id="rightsidecontents" style="padding: 20px; background:white; color: black;">
@@ -139,8 +141,22 @@
                     </div>
                 </div>
                 <!--Right column end's here!-->
-
-
+                <div class="col-md-2 rightmostcol">
+                    <div id="rightmostsidecontents" style="padding: 20px;">
+                        <h5>Interns Online</h5><hr>
+                        {% for user in modal.UserInfo.query(): %}
+                            <button class="onlinebutton" onclick="showchat('{{user.username}}')" style="width:100%;">
+                                <h6 id="onlinename" style="float:left;">
+                                    {% if user.isOnline %}
+                                        <span class="onlinedot" style="background-color: green;"></span> {{user.username}}
+                                    {% else %}
+                                        <span class="onlinedot" style="background-color: red;"></span> {{user.username}}
+                                    {% endif %}
+                                </h6>
+                            </button><br>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         {% else %}

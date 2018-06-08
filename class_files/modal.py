@@ -23,13 +23,19 @@ issinfo = localPackages.requests.get("http://api.open-notify.org/iss-now.json").
 
 class weather:
     description = weatherinfo.get('weather')[0].get('description')
-    latitude    = weatherinfo.get('coord').get('lat')
-    longitude   = weatherinfo.get('coord').get('lon')
-    date        = localPackages.datetime.datetime.fromtimestamp(weatherinfo.get('dt')/1000.0)
-    tempmin     = weatherinfo.get('main').get('temp_min') - 273.15
-    tempmax     = weatherinfo.get('main').get('temp_max') - 273.15
-    place       = weatherinfo.get('name')
+    latitude = weatherinfo.get('coord').get('lat')
+    longitude = weatherinfo.get('coord').get('lon')
+    date = localPackages.datetime.datetime.fromtimestamp(weatherinfo.get('dt')/1000.0)
+    tempmin = weatherinfo.get('main').get('temp_min') - 273.15
+    tempmax = weatherinfo.get('main').get('temp_max') - 273.15
+    place = weatherinfo.get('name')
 
 
 class Globals:
-    newpostkey = 0
+    newpostkey = ""
+    getPostResponse = {
+                        "success": True,
+                        "feeds": [],
+                        "next_cursor": "",
+                        "more": True
+                      }

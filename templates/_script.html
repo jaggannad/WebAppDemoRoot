@@ -1,7 +1,112 @@
 <script type="text/javascript">
+
+    var scroll_next_cursor='';
     var Latitude;
     var Longitude;
     var map, infoWindow;
+
+    $(document).ready(function(){
+        getPosts('');
+    });
+
+    function getPosts(cursor){
+        $.get('/GET/v1.1/feeds/'+cursor, function(data, status){
+            var i = 0;
+            if(data.success == true){
+                while(data.feeds[i] && !document.getElementById(data.feeds[i]['key'])){
+                    createnewpostdiv(data.feeds[i++], false);
+                 }
+            }
+            if(data.more == true) {
+                scroll_next_cursor = data.next_cursor;
+            }
+            else {
+                scroll_next_cursor = '';
+            }
+        });
+    }
+
+    function pagescroll(object) {
+        if(scroll_next_cursor!= ''){
+            object.scrollTo(0, object.scrollHeight - 150);
+            <!--window.alert("cursor is not '': ", scroll_next_cursor);-->
+            document.getElementById('scrollLoaderanime').style.display = 'block';
+            setTimeout(function(){
+                    getPosts(scroll_next_cursor);
+                    document.getElementById('scrollLoaderanime').style.display = 'none';
+                }, 2000);
+        }
+        else{
+            <!--window.alert("cursor is '': ", scroll_next_cursor);-->
+            document.getElementById('scrollLoaderanime').innerHTML = '<div><p>NO MORE POSTS TO DISPLAY</p></div>';
+        }
+
+    }
+
+    function createnewpostdiv(data, isNewPost){
+        var postid = data['key'];
+        var postidviewpostdetails = postid+'viewpostdetails';
+        var postidviewpostcontents = postid+ 'viewpostcontents';
+        var postidpostactions = postid+ 'postactions';
+        var postidlikepost = postid+ 'likepost';
+        var postidlikenumber = postid+ 'likenumber';
+        var likeurl = '/PUT/v1.1/feedlike/'+postid;
+
+        var $viewpostdiv = $("<div>", {id: postid, class: "viewpostdiv"});
+        var $viewpostdetails = $("<div>", {id: postidviewpostdetails, class: "viewpostdetails"});
+        var $viewpostcontents = $("<textarea>", {id: postidviewpostcontents, class: "viewpostcontents",
+                            name: "viewpostcontents", value: "{{request.form.viewpostcontents}}", disabled: 'disabled'});
+        var $postactions = $("<div>", {id: postidpostactions, class: 'postactions'});
+        var $likepost = $("<button>", {id: postidlikepost, class: 'btn btn-link likepost', onclick: "like('"+likeurl+"', '"+postidlikenumber+"')"});
+
+
+        if(isNewPost)
+            $('#recentpostsheading').prepend($viewpostdiv);
+        else
+            $('#recentpostsheading').append($viewpostdiv);
+        $viewpostdiv.append($viewpostdetails);
+        $viewpostdiv.append($viewpostcontents);
+        $viewpostdiv.append($postactions);
+        $postactions.append($likepost);
+        $likepost.css({"float":"left"});
+
+        document.getElementById(postidviewpostdetails).innerHTML = 'Posted by: '+data['username']+' On: '+data['timestamp'];
+        document.getElementById(postidviewpostcontents).innerHTML = data['post'];
+        var likenum = (data['likes']).toString() +"  Like(s)&nbsp;";
+        document.getElementById(postidlikepost).innerHTML = "<div id="+postidlikenumber+" style='float:left;'>"+likenum+"</div><i class='fas fa-thumbs-up'></i>";
+
+        if('{{username}}' === data['username']){
+            var updateurl = '/PUT/v1.1/feedupdate/' + postid;
+            var deleteurl = '/DELETE/v1.1/feeds/' + postid;
+            var postidupdatenewpost = postid+ 'updatenewpost';
+            var postidupdatepost = postid+ 'updatepost';
+            var postiddeletepost = postid+ 'deletepost';
+
+            var $updatenewpost = $("<button>", {id: postidupdatenewpost, class: 'btn btn-link updatenewpost',
+            onclick: "update('"+postidviewpostcontents+"', '"+updateurl+"', '"+ postidupdatenewpost+"', '"+ postidupdatepost+"')"});
+
+            var $updatepost = $("<button>", {id: postidupdatepost, class: 'btn btn-link inline updatepost',
+            onclick: "updateview('"+postidviewpostcontents+"', '"+postidupdatepost+"', '"+ postidupdatenewpost+"')"});
+
+            var $deletepost = $("<button>", {id: postiddeletepost, class: 'btn btn-link inline deletepost',
+            onclick: "deletepost('"+deleteurl+"', '"+ postid+"')"});
+
+            $postactions.append($updatenewpost);
+            $postactions.append($updatepost);
+            $postactions.append($deletepost);
+
+            $updatenewpost.css({"float" : "left", "display": "none"});
+            $updatepost.css({"float" : "left"});
+            $deletepost.css({"float" : "right"});
+
+            document.getElementById(postidupdatenewpost).innerHTML = "<i class='fa fa-share' aria-hidden='true'></i> Post";
+            document.getElementById(postidupdatepost).innerHTML = "<i class='fas fa-pencil-alt'></i> Update";
+            document.getElementById(postiddeletepost).innerHTML = "<i class='fas fa-trash-alt'></i> Delete";
+
+        }
+        $viewpostdiv.append("<br><hr>");
+    }
+
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: -34.397, lng: 150.644},
@@ -53,7 +158,7 @@
 
     }
 
-    function newpost(postid, url){
+    function newpost(postid, url, username){
         document.getElementById('postloader').style.display =  'block';
 
         var post = document.getElementById(postid).value;
@@ -63,25 +168,41 @@
         }, function(jsonresult){
             responsepostid = jsonresult.postid;
             $("#recentposts").load(location.href + " #recentposts");
-            <!--window.alert(responsepostid);-->
             setTimeout(function(){
                 $("#recentposts").load(location.href + " #recentposts");
                 }, 1000);
-                document.getElementById(postid).value = "";
-                document.getElementById('postloader').style.display =  'none';
+
+            var postinfo = {
+                                'key': responsepostid,
+                                'username': username,
+                                'post': document.getElementById(postid).value,
+                                'likes': 0,
+                                'timestamp': jsonresult.timestamp
+                           };
+            createnewpostdiv(postinfo, true);
+            document.getElementById(postid).value = "";
+            document.getElementById('postloader').style.display =  'none';
         });
-        console.log('test');
-        <!--setTimeout(window.location.reload(), 5000);-->
     }
 
     function deletepost(url, postid){
-        $.post(url);
-        document.getElementById(postid).style.display = 'none';
-        }
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function () {
+                document.getElementById(postid).style.display = 'none';
+            }
+        });
+    }
 
     function like(url, like){
-        $.post(url);
-        document.getElementById(like).innerHTML = parseInt(document.getElementById(like).innerHTML)+1 + " Like(s)&nbsp;";
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            success: function () {
+                document.getElementById(like).innerHTML = parseInt(document.getElementById(like).innerHTML)+1 + " Like(s)&nbsp;";
+            }
+        });
     }
     function update(postid, url, postbtn, updatebtn){
         var post = document.getElementById(postid).value;
@@ -94,14 +215,21 @@
         document.getElementById(updatebtn).style.display = 'block';
     }
 
+    <!--chat area starts here!-->
     function showchat(name){
+        document.getElementById('chatname').innerHTML = name;
         chat_close_div = document.getElementById('chatbox');
-        chat_close_div.style.display =  'block';
+        minimize_div = document.getElementById('chatarea');
+        if(chat_close_div.style.display != 'block' || minimize_div.style.display != 'block'){
+            chat_close_div.style.display =  'block';
+            minimize_div.style.display = 'block';
+        }
     }
 
     setInterval(function(){
         $('#rightmostsidecontents').load(location.href + " #rightmostsidecontents");
-    }, 5000);
+    }, 60000);
+
 </script>
 <!--script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script-->
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgGa1OXYnh9fMz6PW_CWLKWqLZQ0FhJvo&callback=initMap"

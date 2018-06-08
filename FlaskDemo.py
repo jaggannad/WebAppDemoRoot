@@ -12,7 +12,7 @@ app.secret_key = "FlaskDemo"
 
 @app.route('/')
 def index():
-    return modal.localPackages.redirect('/about')
+    return modal.localPackages.redirect('/v1.1/about')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -71,7 +71,7 @@ def logout(username):
     return modal.localPackages.redirect(modal.localPackages.url_for('login', message=username+"Loggedout"))
 
 
-@app.route('/about')
+@app.route('/v1.1/about')
 def about():
     modal.localPackages.flash("Hi there!")
     return modal.localPackages.render_template('aboutus.html')
@@ -79,26 +79,53 @@ def about():
 
 @app.route('/profile/v1.1/userprofile/<username>/LoggedIn', methods=['GET', 'POST'])
 def profile(username):
-    return modal.localPackages.render_template("profile.html", username=username, issinfo=modal.issinfo,
+        return modal.localPackages.render_template("profile.html", username=username, issinfo=modal.issinfo,
                                                weatherinfo=modal.weather, modal=modal)
 
 
-@app.route('/post/<username>', methods=['GET', 'POST'])
+@app.route('/POST/v1.1/feeds/<username>', methods=['GET', 'POST'])
 def post(username):
     response = {'success': True, 'desc': 'Posted Message', 'timestamp': str(modal.localPackages.datetime.datetime.now())}
     if modal.localPackages.request.method == 'POST':
         text = modal.localPackages.request.form['javascript_data']
         modal.Globals.newpostkey = modal.Post(post=text, name=username, likes=0).put()
+        response.update({'postid': modal.Globals.newpostkey.urlsafe()})
     else:
         response.update({'success': False, 'desc': 'Post Failed',
                          'timestamp': str(modal.localPackages.datetime.datetime.now())})
     return modal.localPackages.jsonify(response)
 
 
-@app.route('/like/<key>', methods=['GET', 'POST'])
+@app.route('/GET/v1.1/feeds/', defaults={'cursor': None})
+@app.route('/GET/v1.1/feeds/<cursor>')
+def getposts(cursor=None):
+    try:
+        cursor = modal.localPackages.Cursor(urlsafe=cursor)
+        feeds, next_cursor, more = modal.Post.query().order(-modal.Post.timestamp).fetch_page(4, start_cursor=cursor)
+        feedlist = []
+        for feed in feeds:
+            feedlist.append({
+                'key': feed.key.urlsafe(),
+                'username': feed.name,
+                'post': feed.post,
+                'likes': feed.likes,
+                'timestamp': feed.timestamp
+            })
+        if next_cursor is not None:
+            next_cursor = next_cursor.urlsafe()
+        else:
+            next_cursor = 'none'
+        modal.Globals.getPostResponse.update({'feeds': feedlist, 'next_cursor': next_cursor, 'more': more})
+    except Exception, value:
+        modal.localPackages.logging.info(modal.localPackages.format_exc())
+        modal.Globals.getPostResponse.update({'success': False, 'more': False, 'desc': 'Server Error: Unable to retrive posts ErrorDesc: {}'.format(value)})
+    return modal.localPackages.jsonify(modal.Globals.getPostResponse)
+
+
+@app.route('/PUT/v1.1/feedlike/<key>', methods=['GET', 'PUT'])
 def like(key):
     response = {'success': True, 'desc': 'Post Liked', 'timestamp': str(modal.localPackages.datetime.datetime.now())}
-    if modal.localPackages.request.method == 'POST':
+    if modal.localPackages.request.method == 'PUT':
         post = modal.localPackages.ndb.Key(urlsafe=key).get()
         if post:
             post.likes = post.likes+1
@@ -108,7 +135,7 @@ def like(key):
     return modal.localPackages.jsonify(response)
 
 
-@app.route('/update/<key>', methods=['GET', 'POST'])
+@app.route('/PUT/v1.1/feedupdate/<key>', methods=['GET', 'POST'])
 def update(key):
     response = {'success': True, 'desc': 'Post Updated', 'timestamp': str(modal.localPackages.datetime.datetime.now())}
     if modal.localPackages.request.method == 'POST':
@@ -122,10 +149,10 @@ def update(key):
     return modal.localPackages.jsonify(response)
 
 
-@app.route('/delete/<key>', methods=['GET', 'POST'])
+@app.route('/DELETE/v1.1/feeds/<key>', methods=['GET', 'DELETE'])
 def delete(key):
     response = {'success': True, 'desc': 'Post Deleted', 'timestamp': str(modal.localPackages.datetime.datetime.now())}
-    if modal.localPackages.request.method == 'POST':
+    if modal.localPackages.request.method == 'DELETE':
         post = modal.localPackages.ndb.Key(urlsafe=key).get()
         if post:
             post.key.delete()
@@ -135,7 +162,7 @@ def delete(key):
     return modal.localPackages.jsonify(response)
 
 
-@app.route('/accountsettings/<username>', methods=['GET', 'POST'])
+@app.route('/PUT/v1.1/accountsettings/<username>', methods=['GET', 'POST'])
 def accountsettings(username):
     userinfo = modal.UserInfo.query(modal.UserInfo.username == username).get()
     return modal.localPackages.render_template('settings.html', username=username, userinfo=userinfo)

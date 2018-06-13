@@ -14,7 +14,7 @@
                         <a class="nav-link" href="#">Notifications</a>
                   </li>
                   <li class="nav-item active">
-                        <a class="nav-link" href="{{url_for('profile', username=username)}}">Profile</a>
+                        <a class="nav-link" href="{{url_for('profile', userid=userid)}}">Profile</a>
                   </li>
             </ul>
             <div class="form-inline my-2 my-lg-0">
@@ -25,7 +25,7 @@
                   <div class="dropdown">
                     <button type = "button" class="dropbtn btn my-2 my-sm-0">Settings <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-content">
-                      <a href="{{url_for('accountsettings', username=username)}}">Account</a>
+                      <a href="{{url_for('accountsettings', userid=userid)}}">Account</a>
                       <button button type="button" class="btn btn-link" onclick="switchoff()">Log out</button>
                     </div>
                   </div>

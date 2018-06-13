@@ -1,9 +1,9 @@
 {% extends 'defaultlayout.html' %}
 
     {% block body %}
-        <title>{{username}}'s Profile page</title>
+        <title>{{userinfo.username}}'s Profile page</title>
         {% if 'user' in session %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'Stylesheets/style.css')}}?v=5.92">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'Stylesheets/style.css')}}?v=5.93">
         {% include '/_navbar.html' %}<br><br>
         <div class="content">
             <div class="row">
@@ -12,9 +12,36 @@
                 <div class="col-md-2 leftcol">
                     <div id="leftsidecontents">
                         <div class="profilepic">
-                            <strong>Profile Pic</strong>
+                            <strong>Profile Pic</strong><br>
                             <img src="/static/images/{{session['user'].get('profilepic')}}" height="130" width="170">
-                        </div><hr>
+
+                        </div>
+                        <div class="changeprofilepic well-sm" style="color:black;">
+                            <button class="btn-link" data-toggle="modal"  data-target="#myModal">
+                                <i class="fas fa-user-edit">&nbsp;&nbsp;Change Profile Pic</i>
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="myModal" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Modal Header</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Some text in the modal.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                         <div class="LocalInfo">
                             <h4>Location Info</h4>
                             <h6>You are here @ {{weatherinfo.place}}</h6>
@@ -46,15 +73,16 @@
                 <div class="col-md-5 middlecolumn" onscroll="if(this.offsetHeight + this.scrollTop == this.scrollHeight){ pagescroll(this);}">
 
                     <div class="welcome container">
-                        <h2>Welcome {{username}}!</h2><hr>
+                        <h2>Welcome {{userinfo.username}}!</h2><hr>
                     </div>
 
                     <!--This is the post form template-->
                     {% include '/_post.html' %}<br><br>
 
                     <!--Recent Posts Section!-->
-                    <div id="recentpostsheading"><h4>Recent Posts will appear here!</h4><hr></div>
-                    <div id="postloader" class='postloader' style="display: none;"></div>
+                    <h4>Recent Posts will appear here!</h4><hr>
+                    <div id="postloader" class='postloader' style="display: none;"><br></div>
+                    <div id="recentpostshead"><!--New posts will appear here--></div>
                     <div id="recentposts" class="recentposts">
 
                     <!--Recent Posts appear here!-->
@@ -96,9 +124,9 @@
                     <div id="rightmostsidecontents" style="padding: 20px;">
                         <h5>Interns Online</h5><hr>
                         {% for user in modal.UserInfo.query(): %}
-                            <button class="onlinebutton" onclick="if ('{{username}}' != '{{user.username}}')showchat('{{user.username}}')"
+                            <button class="onlinebutton" onclick="if ('{{userinfo.username}}' != '{{user.username}}')showchat('{{user.username}}')"
                                     style="width:100%;">
-                                <h6 id="onlinename" style="float:left;">
+                                <h6 id="onlinename" style="float:left; color:black; padding:auto;">
                                     {% if user.isOnline %}
                                         <span class="onlinedot" style="background-color: green;"></span> {{user.username}}
                                     {% else %}

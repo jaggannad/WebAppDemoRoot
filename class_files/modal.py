@@ -33,9 +33,5 @@ class weather:
 
 class Globals:
     newpostkey = ""
-    getPostResponse = {
-                        "success": True,
-                        "feeds": [],
-                        "next_cursor": "",
-                        "more": True
-                      }
+
+

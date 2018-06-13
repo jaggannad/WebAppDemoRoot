@@ -4,19 +4,20 @@
     var Latitude;
     var Longitude;
     var map, infoWindow;
+    arePostsLoading = 0;
 
     $(document).ready(function(){
         getPosts('');
     });
 
     function getPosts(cursor){
-        $.get('/GET/v1.1/feeds/'+cursor, function(data, status){
+        $.get('/v1.1/feeds/'+cursor, function(data, status){
             var i = 0;
             if(data.success == true){
                 while(data.feeds[i] && !document.getElementById(data.feeds[i]['key'])){
                     createnewpostdiv(data.feeds[i++], false);
                  }
-            }
+            }else console.log(data.desc);
             if(data.more == true) {
                 scroll_next_cursor = data.next_cursor;
             }
@@ -27,9 +28,14 @@
     }
 
     function pagescroll(object) {
+        if(arePostsLoading == 0){
+            arePostsLoading = 1;
+        }
+        else{
+            return;
+        }
         if(scroll_next_cursor!= ''){
             object.scrollTo(0, object.scrollHeight - 150);
-            <!--window.alert("cursor is not '': ", scroll_next_cursor);-->
             document.getElementById('scrollLoaderanime').style.display = 'block';
             setTimeout(function(){
                     getPosts(scroll_next_cursor);
@@ -37,9 +43,9 @@
                 }, 2000);
         }
         else{
-            <!--window.alert("cursor is '': ", scroll_next_cursor);-->
             document.getElementById('scrollLoaderanime').innerHTML = '<div><p>NO MORE POSTS TO DISPLAY</p></div>';
         }
+        arePostsLoading=0;
 
     }
 
@@ -50,7 +56,7 @@
         var postidpostactions = postid+ 'postactions';
         var postidlikepost = postid+ 'likepost';
         var postidlikenumber = postid+ 'likenumber';
-        var likeurl = '/PUT/v1.1/feedlike/'+postid;
+        var likeurl = '/v1.1/feedlike/'+postid;
 
         var $viewpostdiv = $("<div>", {id: postid, class: "viewpostdiv"});
         var $viewpostdetails = $("<div>", {id: postidviewpostdetails, class: "viewpostdetails"});
@@ -61,9 +67,9 @@
 
 
         if(isNewPost)
-            $('#recentpostsheading').prepend($viewpostdiv);
+            $('#recentpostshead').prepend($viewpostdiv);
         else
-            $('#recentpostsheading').append($viewpostdiv);
+            $('#recentpostshead').append($viewpostdiv);
         $viewpostdiv.append($viewpostdetails);
         $viewpostdiv.append($viewpostcontents);
         $viewpostdiv.append($postactions);
@@ -75,9 +81,9 @@
         var likenum = (data['likes']).toString() +"  Like(s)&nbsp;";
         document.getElementById(postidlikepost).innerHTML = "<div id="+postidlikenumber+" style='float:left;'>"+likenum+"</div><i class='fas fa-thumbs-up'></i>";
 
-        if('{{username}}' === data['username']){
-            var updateurl = '/PUT/v1.1/feedupdate/' + postid;
-            var deleteurl = '/DELETE/v1.1/feeds/' + postid;
+        if('{{userinfo.username}}' === data['username']){
+            var updateurl = '/v1.1/feedupdate/' + postid;
+            var deleteurl = '/v1.1/feeds/' + postid;
             var postidupdatenewpost = postid+ 'updatenewpost';
             var postidupdatepost = postid+ 'updatepost';
             var postiddeletepost = postid+ 'deletepost';
@@ -147,7 +153,7 @@
     function switchoff(){
         var choice = window.confirm("Are you sure you want to log out?");
          if(choice ==  true)
-            window.location.replace("{{ url_for('logout', username=username) }}");
+            window.location.replace("{{ url_for('logout', userid=userid) }}");
     }
 
     function updateview(postid, updatebtn, newpost){
@@ -159,6 +165,10 @@
     }
 
     function newpost(postid, url, username){
+        if(document.getElementById('postinput').value == ''){
+            document.getElementById('postinput').placeholder = 'Type before you post!';
+            return;
+        }
         document.getElementById('postloader').style.display =  'block';
 
         var post = document.getElementById(postid).value;

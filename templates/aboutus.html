@@ -6,8 +6,23 @@
         <style>
             body{
                 background-image:url('http://www.storylinemissions.org/wp-content/uploads/2014/03/slide01.jpg');
+                /* Full height */
+                height: 100%;
+                width: 100%;
+                /* Center and scale the image nicely */
+                background-repeat: no-repeat;
+                background-size: cover;
             }
             #aboutusdiv{
+                position:fixed;
+                top: 55%;
+                left: 50%;
+                width:70em;
+                height:26em;
+                margin-top: -13em; /*set to a negative number 1/2 of your height*/
+                margin-left: -35em; /*set to a negative number 1/2 of your width*/
+
+                /* Styling */
                 padding: 40px;
                 background: black;
                 opacity: 0.8;
@@ -18,7 +33,7 @@
                 padding: 20px;
             }
         </style>
-        <div id = 'aboutusdiv' class= 'container' style="position:relative; top:250px; left:auto;">
+        <div id = 'aboutusdiv' class= 'container'>
             <div id = 'aboutustitle' style="position:relative; top:0px; left:200px;">
                 <h2>This is the FULL Intern Program<small>-Learn & grow with us</small></h2>
             </div>

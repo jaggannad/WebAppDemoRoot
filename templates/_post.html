@@ -4,6 +4,6 @@
         <textarea type="text" id="postinput" class="form-control" name = "postinput"
                placeholder="Hey! What's on your mind!" value="{{request.form.postinput}}" required autofocus  style="height: 120px";></textarea>
     </div><br>
-    <button class="btn btn-lg btn-primary btn-block" onclick="newpost('postinput', '{{url_for('post', username=username)}}', '{{username}}')"
+    <button class="btn btn-lg btn-primary btn-block" onclick="newpost('postinput', '{{url_for('post', userid=userid)}}', '{{userinfo.username}}')"
             style="width: 100px;float: right;">Post</button>
 </div>
